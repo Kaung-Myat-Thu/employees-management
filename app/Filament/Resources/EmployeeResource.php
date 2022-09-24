@@ -27,7 +27,7 @@ class EmployeeResource extends Resource
 {
     protected static ?string $model = Employee::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 
     public static function form(Form $form): Form
     {
@@ -38,9 +38,11 @@ class EmployeeResource extends Resource
                         Select::make('country_id')
                             ->label('Country')
                             ->options(Country::all()->pluck('name', 'id')->toArray())
+                            ->required()
                             ->reactive(),
                         Select::make('state_id')
                             ->label('State')
+                            ->required()
                             ->options(function (callable $get){
                                 $country = Country::find($get('country_id'));
                                 if(!$country) return State::all()->pluck('name', 'id');
@@ -48,6 +50,7 @@ class EmployeeResource extends Resource
                             })->reactive(),
                         Select::make('city_id')
                             ->label('City')
+                            ->required()
                             ->options(function (callable $get){
                                 $state = State::find($get('state_id'));
                                 if(!$state) return City::all()->pluck('name', 'id');
@@ -55,10 +58,10 @@ class EmployeeResource extends Resource
                             })->reactive(),
                         Select::make('department_id')
                             ->relationship('department', 'name')->required(),
-                        TextInput::make('first_name')->required(),
-                        TextInput::make('last_name')->required(),
-                        TextInput::make('address')->required(),
-                        TextInput::make('zip_code')->required(),
+                        TextInput::make('first_name')->required()->maxLength(255),
+                        TextInput::make('last_name')->required()->maxLength(255),
+                        TextInput::make('address')->required()->maxLength(255),
+                        TextInput::make('zip_code')->required()->maxLength(5),
                         DatePicker::make('birth_date')->required(),
                         DatePicker::make('date_hired')->required(),
                     ])
