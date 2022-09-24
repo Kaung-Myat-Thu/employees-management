@@ -3,12 +3,15 @@
 namespace App\Filament\Resources\StateResoruceResource\RelationManagers;
 
 use Filament\Forms;
-use Filament\Resources\Form;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Resources\Form;
+use Filament\Resources\Table;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Resources\RelationManagers\RelationManager;
 
 class CitiesRelationManager extends RelationManager
 {
@@ -20,7 +23,10 @@ class CitiesRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                Select::make('state_id')
+                            ->relationship('state', 'name')
+                            ->required(),
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
             ]);
@@ -30,7 +36,10 @@ class CitiesRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                TextColumn::make('id')->sortable(),
+                TextColumn::make('name')->sortable()->searchable(),
+                TextColumn::make('state.name')->sortable()->searchable(),
+                TextColumn::make('created_at')->dateTime(),
             ])
             ->filters([
                 //
@@ -45,5 +54,5 @@ class CitiesRelationManager extends RelationManager
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
-    }    
+    }
 }
